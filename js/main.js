@@ -735,7 +735,7 @@ function renderAdminPanel() {
         panel.innerHTML = `
             <h3>审核面板</h3>
             <p style="text-align: center; color: #999; padding: 20px;">暂无待审核内容</p>
-            <button class="review-btn approve" onclick="loadData()" style="width: 100%; margin-top: 10px;">刷新数据</button>
+            <button class="review-btn approve" onclick="refreshAllData()" style="width: 100%; margin-top: 10px;">刷新数据</button>
         `;
         return;
     }
@@ -755,8 +755,13 @@ function renderAdminPanel() {
                 </div>
             </div>
         `).join('')}
-        <button class="review-btn approve" onclick="loadData()" style="width: 100%; margin-top: 15px;">刷新全部数据</button>
+        <button class="review-btn approve" onclick="refreshAllData()" style="width: 100%; margin-top: 15px;">刷新全部数据</button>
     `;
+}
+
+// 刷新公开数据和待审核数据
+function refreshAllData() {
+    location.reload();
 }
 
 // 审核通过
