@@ -188,6 +188,38 @@
             color: var(--primary);
         }
 
+        /* 去重提示 */
+        .dedup-notice {
+            margin: -5px 0 15px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255, 193, 7, 0.12);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .dedup-notice.warning {
+            background: rgba(255, 152, 0, 0.12);
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+        .dedup-notice.danger {
+            background: rgba(244, 67, 54, 0.1);
+            border-color: rgba(244, 67, 54, 0.25);
+        }
+        .dedup-notice a {
+            color: var(--primary);
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .dedup-notice .dedup-title {
+            font-weight: 800;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         /* 审核项分类选择器 */
         .review-category {
             margin-top: 6px;
@@ -458,6 +490,7 @@
                 <div class="upload-hints" style="font-size: 12px; color: #999; margin: -10px 0 15px; line-height: 1.6;">
                     支持 JPG/PNG/GIF/WebP，单张最大 10MB，每天最多上传 10 张
                 </div>
+                <div id="dedupNotice" class="dedup-notice" style="display:none;"></div>
                 <button type="submit" class="submit-btn">发布菲比</button>
             </form>
         </div>
@@ -587,6 +620,7 @@
         <img src="images/top.png" alt="菲比" onerror="this.src='https://via.placeholder.com/200x200/7B6BC6/FFFFFF?text=菲比'" />
     </div>
 
+    <script src="js/dedup.js"></script>
     <script src="js/main.js"></script>
 
     <!-- ===== 修改：内联脚本 - 预览图控制 ===== -->
@@ -624,6 +658,11 @@
                     previewImg.classList.add('show');
                     container.classList.add('has-image');
                     // 占位隐藏（通过 CSS .has-image .file-upload-placeholder { display:none }）
+
+                    // 触发去重检查
+                    if (typeof window.onUploadFileSelected === 'function') {
+                        window.onUploadFileSelected(file);
+                    }
                 };
                 reader.onerror = function() {
                     alert('读取图片失败，请重试');

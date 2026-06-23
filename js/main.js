@@ -34,6 +34,7 @@ let currentUser = null;
 let batchFiles = [];
 let selectedPendingIds = new Set();
 let selectedMemeIds = new Set();
+let currentUploadHash = null; // 当前待上传图片的感知哈希
 
 // 上传安全限制配置
 const UPLOAD_CONFIG = {
@@ -191,6 +192,7 @@ async function loadData() {
                     isGif: data.isGif || false,
                     hot: data.hot || 0,
                     tags: data.tags || [],
+                    hash: data.hash || null,
                     createdAt: data.createdAt ? data.createdAt.toDate() : new Date()
                 };
             });
@@ -229,6 +231,7 @@ async function loadPendingData() {
                 isGif: data.isGif || false,
                 hot: data.hot || 0,
                 tags: data.tags || [],
+                hash: data.hash || null,
                 createdAt: data.createdAt ? data.createdAt.toDate() : new Date()
             };
         });
@@ -687,26 +690,10 @@ function closeLightbox() {
 }
 
 // 上传模态框
+// 注意：上传区域的点击、预览、去重检测已在 index.html 的内联脚本中处理，
+// 这里保留函数入口以兼容原有初始化流程。
 function initUploadModal() {
-    const fileInput = document.getElementById('uploadFile');
-    const preview = document.getElementById('previewImage');
-    const fileUpload = document.querySelector('.file-upload');
-
-    if (fileUpload && fileInput) {
-        fileUpload.addEventListener('click', () => fileInput.click());
-
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file && preview) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    preview.src = event.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
+    // no-op：避免重复绑定事件导致文件选择框弹出两次
 }
 
 // 显示上传模态框
@@ -826,6 +813,61 @@ async function compressImageFile(file, maxWidth = 1200, quality = 0.85) {
     });
 }
 
+// 用户选择上传文件后触发：计算感知哈希并提示相似图片
+async function onUploadFileSelected(file) {
+    currentUploadHash = null;
+    const notice = document.getElementById('dedupNotice');
+    if (notice) {
+        notice.style.display = 'none';
+        notice.innerHTML = '';
+        notice.className = 'dedup-notice';
+    }
+
+    if (!file || !file.type.startsWith('image/')) return;
+
+    try {
+        showToast('正在检测是否有重复图片...');
+        const hash = await computeImageHash(file);
+        currentUploadHash = hash;
+
+        // 与已有图片比对（只比较有 hash 的）
+        const candidates = findDuplicateCandidates(hash, memesData);
+        const similar = findSimilarImages(hash, memesData).filter(r => r.distance > DedupConfig.blockThreshold);
+
+        if (!notice) return;
+
+        if (candidates.length > 0) {
+            notice.className = 'dedup-notice danger';
+            notice.innerHTML = `
+                <div class="dedup-title">⚠️ 发现高度相似图片</div>
+                <div>这张图片可能与以下内容重复，建议先搜索查看：</div>
+                <div style="margin-top:6px;">
+                    ${candidates.slice(0, 3).map(r => `
+                        <a onclick="searchByTitle('${escapeHtml(r.meme.title || '').replace(/'/g, "\\'")}')">${escapeHtml(r.meme.title || '未命名')}</a>
+                        <span style="color:#999;font-size:11px;">(相似度 ${(r.similarity * 100).toFixed(0)}%)</span>
+                    `).join('<br>')}
+                </div>
+            `;
+            notice.style.display = 'block';
+        } else if (similar.length > 0) {
+            notice.className = 'dedup-notice warning';
+            notice.innerHTML = `
+                <div class="dedup-title">💡 发现相似图片</div>
+                <div>以下内容可能与你上传的图片相似：</div>
+                <div style="margin-top:6px;">
+                    ${similar.slice(0, 3).map(r => `
+                        <a onclick="searchByTitle('${escapeHtml(r.meme.title || '').replace(/'/g, "\\'")}')">${escapeHtml(r.meme.title || '未命名')}</a>
+                        <span style="color:#999;font-size:11px;">(相似度 ${(r.similarity * 100).toFixed(0)}%)</span>
+                    `).join('<br>')}
+                </div>
+            `;
+            notice.style.display = 'block';
+        }
+    } catch (e) {
+        console.warn('去重检测失败:', e);
+    }
+}
+
 // 处理上传 - 上传到 Firebase 待审核
 async function handleUpload(event) {
     event.preventDefault();
@@ -901,7 +943,7 @@ async function handleUpload(event) {
         const imageUrl = await uploadToCloudinary(processedFile);
 
         // 6. 保存图片 URL 到 Firestore pending 集合
-        await db.collection('pending').add({
+        const pendingData = {
             title: name,
             url: imageUrl,
             category: category,
@@ -909,10 +951,15 @@ async function handleUpload(event) {
             date: new Date().toISOString().split('T')[0],
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'pending'
-        });
+        };
+        if (currentUploadHash) {
+            pendingData.hash = currentUploadHash;
+        }
+        await db.collection('pending').add(pendingData);
 
         // 记录上传成功
         recordUploadAttempt(1);
+        currentUploadHash = null;
 
         closeUploadModal();
         showToast(`「${name}」已提交审核，请耐心等待~`);
@@ -1052,6 +1099,7 @@ function renderAdminPanel() {
             <p style="text-align: center; color: #999; padding: 20px;">暂无待审核内容</p>
             <button class="review-btn approve" onclick="showBatchUploadModal()" style="width: 100%; margin-top: 10px;">批量上传</button>
             <button class="review-btn approve" onclick="showBulkManageModal()" style="width: 100%; margin-top: 10px;">已发布管理</button>
+            <button class="review-btn approve" onclick="batchComputeMissingHashes()" style="width: 100%; margin-top: 10px;">补算图片指纹</button>
             <button class="review-btn approve" onclick="refreshAllData()" style="width: 100%; margin-top: 10px;">刷新数据</button>
         `;
         return;
@@ -1090,6 +1138,7 @@ function renderAdminPanel() {
         }).join('')}
         <button class="review-btn approve" onclick="showBatchUploadModal()" style="width: 100%; margin-top: 10px;">批量上传</button>
         <button class="review-btn approve" onclick="showBulkManageModal()" style="width: 100%; margin-top: 10px;">已发布管理</button>
+        <button class="review-btn approve" onclick="batchComputeMissingHashes()" style="width: 100%; margin-top: 10px;">补算图片指纹</button>
         <button class="review-btn approve" onclick="refreshAllData()" style="width: 100%; margin-top: 15px;">刷新全部数据</button>
     `;
 }
@@ -1201,6 +1250,7 @@ async function batchApprove() {
                 tags: [],
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
+            if (meme.hash) newMemeData.hash = meme.hash;
 
             await db.collection('memes').add(newMemeData);
             await db.collection('pending').doc(id).delete();
@@ -1244,6 +1294,55 @@ async function batchReject() {
     pendingData = pendingData.filter(p => !selectedPendingIds.has(p.firebaseId));
     selectedPendingIds.clear();
     await refreshPendingList();
+}
+
+// 管理员批量补算旧图指纹
+async function batchComputeMissingHashes() {
+    if (!firebaseEnabled || !isAdmin) {
+        showToast('请先登录管理员账号');
+        return;
+    }
+
+    // 只处理已发布且没有 hash 的图片
+    const missing = memesData.filter(m => m.url && !m.hash);
+    if (missing.length === 0) {
+        showToast('所有已发布图片都已有指纹');
+        return;
+    }
+
+    if (!confirm(`共有 ${missing.length} 张旧图缺少指纹，现在开始补算吗？\n这会逐张下载图片并在浏览器本地计算，可能需要一些时间。`)) {
+        return;
+    }
+
+    showToast(`开始补算 ${missing.length} 张图片指纹...`);
+    let updatedCount = 0;
+    let failedCount = 0;
+
+    try {
+        const results = await batchComputeHashes(missing, (current, total) => {
+            showToast(`正在计算指纹 ${current}/${total}...`);
+        });
+
+        // 写回 Firestore
+        for (const item of results) {
+            if (!item.hash) continue;
+            try {
+                await db.collection('memes').doc(item.id).update({ hash: item.hash });
+                updatedCount++;
+            } catch (e) {
+                console.error(`保存指纹失败 (${item.id}):`, e);
+                failedCount++;
+            }
+        }
+    } catch (e) {
+        console.error('批量补算指纹失败:', e);
+        showToast('补算过程出错，请查看控制台');
+        return;
+    }
+
+    showToast(`补算完成：成功 ${updatedCount} 张，失败 ${failedCount} 张`);
+    await loadData();
+    renderMemes();
 }
 
 // 批量上传功能
@@ -1372,6 +1471,14 @@ async function handleBatchUpload() {
             const autoType = isGif ? 'gif' : 'static';
             const category = [...new Set([autoType, ...checkedCategories])];
 
+            // 计算感知哈希
+            let fileHash = null;
+            try {
+                fileHash = await computeImageHash(file);
+            } catch (e) {
+                console.warn('批量上传哈希计算失败:', file.name, e);
+            }
+
             // 压缩
             let processedFile = await compressImageFile(file, 1200, 0.85);
 
@@ -1384,7 +1491,7 @@ async function handleBatchUpload() {
             const imageUrl = await uploadToCloudinary(processedFile);
 
             // 保存到 pending
-            await db.collection('pending').add({
+            const pendingItem = {
                 title: name,
                 url: imageUrl,
                 category: category,
@@ -1392,7 +1499,9 @@ async function handleBatchUpload() {
                 date: new Date().toISOString().split('T')[0],
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 status: 'pending'
-            });
+            };
+            if (fileHash) pendingItem.hash = fileHash;
+            await db.collection('pending').add(pendingItem);
 
             successCount++;
         } catch (e) {
@@ -1430,24 +1539,25 @@ async function approveMeme(firebaseId, index) {
     if (!meme) return;
 
     try {
-        // 1. 添加到 memes 集合
-        const newMemeData = {
-            title: meme.title,
-            url: meme.url,
-            category: meme.category || ['cute'],
-            isGif: meme.isGif || false,
-            date: meme.date,
-            views: 0,
-            downloads: 0,
-            hot: 0,
-            tags: [],
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
+            // 1. 添加到 memes 集合
+            const newMemeData = {
+                title: meme.title,
+                url: meme.url,
+                category: meme.category || ['cute'],
+                isGif: meme.isGif || false,
+                date: meme.date,
+                views: 0,
+                downloads: 0,
+                hot: 0,
+                tags: [],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            if (meme.hash) newMemeData.hash = meme.hash;
 
-        await db.collection('memes').add(newMemeData);
+            await db.collection('memes').add(newMemeData);
 
-        // 2. 从 pending 删除
-        await db.collection('pending').doc(firebaseId).delete();
+            // 2. 从 pending 删除
+            await db.collection('pending').doc(firebaseId).delete();
 
         // 3. 更新本地数据
         pendingData.splice(index, 1);
