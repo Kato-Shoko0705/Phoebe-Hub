@@ -17,7 +17,7 @@
     },
     {
       "id": 2,
-      "title": "...1",
+      "title": "1",
       "url": "images/...1.webp",
       "category": [
         "static",
@@ -32,8 +32,8 @@
     },
     {
       "id": 3,
-      "title": "...嗯？",
-      "url": "images/...%E5%97%AF%EF%BC%9F.webp",
+      "title": "嗯？",
+      "url": "images/...嗯？.webp",
       "category": [
         "static",
         "cute"
