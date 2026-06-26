@@ -73,7 +73,9 @@
       "date": "2026-06-25",
       "isGif": true,
       "hot": 0,
-      "tags": []
+      "tags": [
+        "recommended"
+      ]
     },
     {
       "id": 6,
@@ -129,11 +131,14 @@
         "cute"
       ],
       "views": 0,
-      "downloads": 0,
+      "downloads": 114514,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 100,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 10,
@@ -193,7 +198,9 @@
       "date": "2026-06-25",
       "isGif": false,
       "hot": 0,
-      "tags": []
+      "tags": [
+        "featured"
+      ]
     },
     {
       "id": 14,
@@ -958,7 +965,9 @@
       "date": "2026-06-25",
       "isGif": false,
       "hot": 0,
-      "tags": []
+      "tags": [
+        "recommended"
+      ]
     },
     {
       "id": 65,
@@ -1063,7 +1072,10 @@
       "date": "2026-06-25",
       "isGif": false,
       "hot": 0,
-      "tags": []
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 72,
@@ -1078,7 +1090,10 @@
       "date": "2026-06-25",
       "isGif": false,
       "hot": 0,
-      "tags": []
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 73,
@@ -1122,8 +1137,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 6,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 76,
@@ -1557,8 +1575,10 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": true,
-      "hot": 0,
-      "tags": []
+      "hot": 5,
+      "tags": [
+        "recommended"
+      ]
     },
     {
       "id": 105,
@@ -2457,8 +2477,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 2,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 165,
@@ -2607,8 +2630,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": true,
-      "hot": 0,
-      "tags": []
+      "hot": 100,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 175,
@@ -3058,7 +3084,9 @@
       "date": "2026-06-25",
       "isGif": false,
       "hot": 0,
-      "tags": []
+      "tags": [
+        "recommended"
+      ]
     },
     {
       "id": 205,
@@ -3102,8 +3130,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 12,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 208,
@@ -3312,8 +3343,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": true,
-      "hot": 0,
-      "tags": []
+      "hot": 100,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 222,
@@ -3747,8 +3781,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 3,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 251,
@@ -4137,8 +4174,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 3,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 277,
@@ -4287,8 +4327,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 8,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 287,
@@ -4299,11 +4342,14 @@
         "cute"
       ],
       "views": 0,
-      "downloads": 0,
+      "downloads": 52,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 100,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 288,
@@ -5082,8 +5128,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 10,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 340,
@@ -5367,8 +5416,10 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 8,
+      "tags": [
+        "featured"
+      ]
     },
     {
       "id": 359,
@@ -5757,8 +5808,10 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 3,
+      "tags": [
+        "recommended"
+      ]
     },
     {
       "id": 385,
@@ -6012,8 +6065,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 49,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 402,
@@ -6027,8 +6083,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 24,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 403,
@@ -6642,8 +6701,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 49,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 444,
@@ -6762,8 +6824,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 91,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 452,
@@ -6882,8 +6947,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 38,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 460,
@@ -6957,8 +7025,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 100,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 465,
@@ -6972,8 +7043,11 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 100,
+      "tags": [
+        "featured",
+        "recommended"
+      ]
     },
     {
       "id": 466,
@@ -7047,8 +7121,10 @@
       "downloads": 0,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 19,
+      "tags": [
+        "recommended"
+      ]
     },
     {
       "id": 471,
@@ -7734,11 +7810,14 @@
         "cute"
       ],
       "views": 0,
-      "downloads": 0,
+      "downloads": 56,
       "date": "2026-06-25",
       "isGif": false,
-      "hot": 0,
-      "tags": []
+      "hot": 52,
+      "tags": [
+        "recommended",
+        "featured"
+      ]
     },
     {
       "id": 517,
@@ -7830,5 +7909,7 @@
       "hot": 0,
       "tags": []
     }
-  ]
+  ],
+  "pending": [],
+  "nextId": 523
 }
